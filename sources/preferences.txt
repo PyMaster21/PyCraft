@@ -1,0 +1,61 @@
+Ce fichier de préférences est traité par le fichier préférences.py
+les paramètres sont de forme
+# param : valeur sachant que le "#" n'est que nécessaire quand on veut annoter quelque chose derrière une valeur, ex:
+# param : valeur      # annotation
+
+
+PARAMÈTRES MISC
+sensibilite: 0.4          # défaut: 0.4    Un float pour la sensibilite de la souris dans le jeu
+gravite dynamique: True # défaut: True Un bool pour la gravité dynamique (la gravité diminue 
+                        #              progressivement le plus haut on monte avant de s'inverser)
+max fps: 80             # défaut: 80   Le fps auquel le jeu sera limité
+fov: 70                 # défaut: 70   Se référer à la section caméra de la doc pour voir ce que ce nombre représente
+
+
+
+PARAMÈTRES CLAVIER
+clavier : azerty # Changeable à "qwerty", "azerty" ou "autre". 	Si autre est choisi, le programme regardera les 
+                                touches écrites ci-dessous qui peuvent soit être une lettre de l'alphabet, 
+                                soit les touches du clavier:
+                                "up"/"haut", "down"/"bas", "left"/"gauche", "right"/"droite"
+                                soit encore "shift"/"maj", "space"/"espace" et "escape"/"echap"
+DÉFINITION DES TOUCHES DANS LE CAS D'UN CLAVIER=AUTRE
+--Mouvement--
+devant : z   # qwerty: w, azerty: z
+gauche : q   #         a          q
+droite : d   #         d          d
+derriere : s #         s          s
+monter : space #       space      space
+descendre : shift #    shift      shift
+                    
+--Contrôle du jeu --
+voler : f           #  f          f           Voler met la gravité en pause
+pause : escape      #  escape     escape      Quand le jeu est pausé la souris est libérée et la physique 
+                                              ainsi que les contrôles sont arrêtés
+quitter : a         #  q          a           Appuyer sur quitter + pause pour quitter le jeu  
+                    
+-- Contrôle de --                             Permet de changer les touches utilisées pour changer le bloc 
+--  la hotbar  --                             sélectionné dans la hotbar
+                                              Ainsi que de changer celles utilisées pour changer de hotbar
+hotbar gauche : left # left       left        
+hotbar droite : right# right      right
+hotbar haut : up    #  up         up   
+hotbar bas : down   #  down       down
+
+
+PARAMÈTRES DE GÉNÉRATION
+renderdistance : 5     # défaut : 5,       Un uint >=3, Ceci va déterminer la distance en dessous de laquelle les chunks 
+                                                        seront affichés
+gendistance : 7        # défaut : 7,       Un uint >=3, Ceci va déterminer la distance en dessous de laquelle les chunks
+                                                        seront demandées à être générées
+generation initiale : 10 # défaut: 10      Un int, ceci va déterminer la longueur (en chunks) du côté du carré de génération
+                                           initale. 
+                                           Le plus votre ordinateur est puissant, le plus cette valeur peut être augmentée
+relief: True           # défaut: True      Un bool, ceci va déterminer si le terrain a du relief ou pas
+biomes: True           # défaut: True      Un bool, ceci va déterminer si le terrain a des biomes ou pas
+arbres: True           # défaut: True      Un bool, ceci va déterminer si le terrain a des arbres ou pas
+îles flottantes: True  # défaut: True      Un bool, ceci va déterminer si le terrain a des îles flottantes ou pas
+volcans: True          # défaut: True      Un bool, ceci va déterminer si le terrain a des volcans ou pas
+villages: True         # défaut: True      Un bool, ceci va déterminer si le terrain a des villages ou pas
+minerais: True         # défaut: True      Un bool, ceci va déterminer si le terrain a des minerais ou pas
+ 

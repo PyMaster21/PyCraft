@@ -1,0 +1,5 @@
+numpy==1.26.4
+moderngl==5.9.0
+pygame==2.5.2
+pynput==1.7.2
+pywin32==306

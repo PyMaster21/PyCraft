@@ -1,0 +1,3 @@
+License: OSI Approved, MIT License (MIT)
+
+Author: Szabolcs Dombi

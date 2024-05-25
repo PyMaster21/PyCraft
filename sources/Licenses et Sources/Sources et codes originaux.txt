@@ -1,0 +1,16 @@
+Un de nos buts avec ce projet était de commencer avec aussi de librairies et d'aides externes que possible. 
+Ainsi, tous nos codes sont originaux, mis à part les utilisations de librairies ainsi que
+-Pour Arthur, donc dans la partie génération de terrain, la seule partie qui ne soit pas originale est le perlin noise qui a été
+		tirée de
+			https://adrianb.io/2014/08/09/perlinnoise.html
+			https://en.wikipedia.org/wiki/Perlin_noise
+			https://www.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-noise/a/perlin-noise. 
+	L'algorithme présent sur ces pages a cependant été grandement réécrit avec son implémentation par Arthur
+
+-Quant à Stanley, il a utilisé les infos à https://stackoverflow.com/questions/50401474/texture-coordinates-on-a-triangle-strip pour avoir un affichage plus performant, 
+		et c'est la seule partie qui ne soit pas originale (il a tout redérivé et trouvé lui même)
+
+-Finalement pour Oscar, la seule partie qu'il n'ait pas fait lui même est la matrice de pojection (section Jeu.Objets.Caméra.projectionmatrix de la documentation)
+		Celle-ci est trouvable à https://www.songho.ca/opengl/gl_projectionmatrix.html , mais a été modifiée pour être utilisée dans le jeu (voir la doc)
+		Les autres matrices présentes sont certes trouvables en ligne, mais Oscar les a toutes redérivées lui-même, et nous ne listons donc celles-ci pas 
+		comme une création non originale
