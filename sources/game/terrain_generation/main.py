@@ -12,7 +12,7 @@ import game.terrain_generation.floating_island as floating_island
 import game.terrain_generation.structures as structures
 import game.terrain_generation.generation as generation
 import game.terrain_generation.renderables as renderables
-
+import game.terrain_generation.caves as caves
 
 MAX_PROCESSES = multiprocessing.cpu_count()
 max_processes_by_method = {"Init": min(MAX_PROCESSES, prefs.INITIAL_TERRAIN_SIZE),  "default": 1}
@@ -58,6 +58,11 @@ def compute_chunk(top_left, bottom_right, result_dict, out_of_bounds_tree_placeh
                                               water=water_pixels,
                                               flat=flat_pixels,
                                               forest=forest_pixels).get_map()
+        
+    if settings.GENERATION["caves"] and settings.GENERATION["relief"]:
+        cave = caves.Cave(top_left, bottom_right, seeds[7])
+        data = cave.place(data)
+
 
     if result_dict != "return":
         # Met à jour le dictionnaire commun à tous les processes avec la data calculée

@@ -1,7 +1,6 @@
 """SETTINGS DE GENERATION DE TERRAIN"""
 from game.settings import *  # importe les settings communs
-import game.preferences as preferences
-preferences.setup_preferences()
+
 GENERATION = preferences.GENERATION
 
 # ------------------------ GENERATION SETTINGS ----------------------------
@@ -42,12 +41,13 @@ FLOATING_ISLAND_RANDOM_HEIGHTS = (20, 30)  # hauteurs des deux autres layers
 
 # ----------------------- VILLAGE SETTINGS --------------------------------
 
-VILLAGES_BY_1000x1000 = 20  # nombre théorique de villages par zone de 1000x1000 blocs
+VILLAGES_BY_1000x1000 = 20  # 20# nombre théorique de villages par zone de 1000x1000 blocs
 
 VILLAGES_MAX_RADIUS = 100  # rayon maximal que peut avoir un village
-VILLAGES_MIN_DISTANCE_FROM_PLAYER = 10  # distance minimale d'un village avec le player pour pouvoir spawner
+VILLAGES_MIN_DISTANCE_FROM_PLAYER = preferences.RENDER_DISTANCE * 2  # distance minimale d'un village avec le player pour pouvoir spawner
 VILLAGES_RANDOM_NUMBER_OF_HOUSES = [8, 20]  # nombre de maisons
 VILLAGES_IGNORED_BLOCS = [0, 3, 4]  # blocs ignorés : si il y a une maison, on les remplace par les blocs de maison
+VILLAGES_AUTHORIZED_BLOCS = [6, 12, 17, 11, 16, 5]
 VILLAGES_MIN_GAP_BETWEEN_HOUSES = 5  # espacement minimal entre deux maisons
 
 # localisation des fichiers
@@ -77,6 +77,13 @@ OOB_VOLCANOS_PATH = f"{WORLD_ID}/_outofbounds/volcanos/_entities"
 OOB_VOLCANOS_CHUNK_PATH = f"{WORLD_ID}/_outofbounds/volcanos"
 
 VOLCANO_LAVA_CHECK_PATH = f"{WORLD_ID}/_outofbounds/volcanos/lava.json"
+
+
+
+# ---------------------- CAVES SETTINGS ---------------------------------------
+NUMBER_OF_CURSOR_PAIRS = max(min(preferences.CAVE_QUALITY, 8), 1)
+
+
 
 
 # ------------------------ USEFUL FUNCTIONS -------------------------------

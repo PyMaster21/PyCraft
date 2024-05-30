@@ -397,11 +397,13 @@ def gen_house(tops, ID):
         for x, y, z, item in blocs:
             sx, sy = x - chunk_x, y - chunk_y
             if (x, y) not in xy_done:
-                for sz in range(top+1):
+                for sz in range(top, 0, -1):
                     i = chunk[sx, sy, sz]
                     if i in settings.VILLAGES_IGNORED_BLOCS:
                         # On place la pierre dessous
                         chunk[sx, sy, sz] = settings.BLOC_VERS_ID["pierre"]
+                    if i in settings.VILLAGES_AUTHORIZED_BLOCS:
+                        break
                 xy_done.append((x, y))
             # On ajoute le bloc de maison à la chunk
             chunk[sx, sy, z+top+1] = item
@@ -409,7 +411,7 @@ def gen_house(tops, ID):
         np.save(settings.CHUNKS_FORMAT % (*norm,), chunk)
 
 
-def get_tops(mins_maxs, current_map, top_left_):
+def get_tops_ancien(mins_maxs, current_map, top_left_):
     """Definit le point le plus haut du terrain dans une zone donnée """
     x1, x2, y1, y2 = mins_maxs  # (x1,y1) top_left de la maison, (x2, y2) bottom_right de la maison
 
@@ -418,15 +420,87 @@ def get_tops(mins_maxs, current_map, top_left_):
     sy = np.arange(y1 - top_left_[1], y2 - top_left_[1] + 1).reshape(1, -1)
 
     # Fais un masque pour les blocs ignorés (air, tronc et feuilles)
+    augmented = np.zeros(shape=(16, 16, settings.MAX_HEIGHT))
+    augmented[:, :, :-1] = current_map[:, :, 1:]
     mask = np.isin(current_map[sx, sy], settings.VILLAGES_IGNORED_BLOCS)
+    #mask2 = np.isin(augmented[sx, sy], [6, 12, 17, 11, 16])
+    
+    #print(mask.shape, mask2.shape, mask.tolist(), mask2.tolist(), sep="\n")
+
+    #mask *= mask2
 
     # Trouve l'index du premier bloc qui est un bloc ignoré le long de l'axe z
     indices = np.argmax(mask, axis=2)
+    #print(indices)
+
 
     # Definit les hauteurs maximales
     tops = indices - 1
 
     # Hauteur maximum de toutes les hauteurs checkées
+    top = int(np.max(tops))
+
+    top = max(settings.WATER_LEVEL, top)
+
+    print("TOP", top)
+
+    return top
+
+
+
+
+def get_tops(mins_maxs, current_map, top_left_):
+    """Definit le point le plus haut du terrain dans une zone donnée """
+    x1, x2, y1, y2 = mins_maxs  # (x1,y1) top_left de la maison, (x2, y2) bottom_right de la maison
+
+    tops = []
+    for x in range(x1 - top_left_[0], x2 - top_left_[0] + 1):
+        for y in range(y1 - top_left_[1], y2 - top_left_[1] + 1):
+            for z in range(settings.WATER_LEVEL - 5, settings.MAX_HEIGHT):
+                if current_map[x, y, z] in settings.VILLAGES_IGNORED_BLOCS:
+                    if current_map[x, y, z-1] in settings.VILLAGES_AUTHORIZED_BLOCS:
+                        tops.append(z - 1)
+                        break 
+    try:
+        return max(tops)
+    except:
+        print(range(x1 - top_left_[0], x2 - top_left_[0] + 1), range(y1 - top_left_[1], y2 - top_left_[1] + 1))
+
+
+
+
+def get_tops_2(mins_maxs, current_map, top_left_):
+    x1, x2, y1, y2 = mins_maxs  # (x1,y1) top-left of the house, (x2, y2) bottom-right of the house
+
+    # np.arange is similar to "range()", but more suited and efficient for numpy arrays
+    sx = np.arange(x1 - top_left_[0], x2 - top_left_[0] + 1).reshape(-1, 1)
+    sy = np.arange(y1 - top_left_[1], y2 - top_left_[1] + 1).reshape(1, -1)
+
+    # Mask for ignored blocks (air, trunk, leaves)
+    augmented = np.ones(shape=(16, 16, settings.MAX_HEIGHT))
+    augmented[:, :, :-1] = current_map[:, :, 1:]
+    mask = np.isin(current_map[sx, sy], settings.VILLAGES_IGNORED_BLOCS)
+    mask2 = (augmented[sx, sy] in [6, 12, 17, 11, 16])
+
+
+    # Find the index of the first ignored block along the z-axis
+    indices = np.argmax(mask, axis=2)
+
+    # Create a boolean array for valid tops (if indices are within bounds)
+    valid_tops = (indices > 0) & (indices < current_map.shape[2])
+    
+    # Check if the block below the first ignored block is in the below_blocks list
+    for i in range(sx.shape[0]):
+        for j in range(sy.shape[1]):
+            if valid_tops[i, j]:
+                below_block = current_map[sx[i, 0], sy[0, j], indices[i, j] - 1]
+                if below_block not in [6, 12, 17, 11, 16]:
+                    valid_tops[i, j] = False
+    
+    # Define the tops heights
+    tops = np.where(valid_tops, indices - 1, 0)
+
+    # Maximum height of all checked heights
     top = int(np.max(tops))
 
     return top

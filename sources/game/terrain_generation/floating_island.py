@@ -1,8 +1,38 @@
 import random
 import numpy as np
-
+import time
 import game.terrain_generation.settings as settings
 from game.terrain_generation.perlin_noise import PerlinNoise
+
+
+artefact_pattern = np.array([[
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 17, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+],
+[
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 17, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+],
+[
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+],
+[
+    [0, 0, 17, 0, 0],
+    [0, 0, 0, 0, 0],
+    [17, 0, 12, 0, 17],
+    [0, 0, 0, 0, 0],
+    [0, 0, 17, 0, 0],
+]]).swapaxes(0, 2)
 
 
 class FloatingIsland:
@@ -29,6 +59,7 @@ class FloatingIsland:
 
     def generate_layer(self, seed, height_shift):
         """Genère une couche d'ile flottante à une hauteur donnée"""
+        where_island = np.zeros(shape=(self.current_map.shape[:2]))
 
         # Calcule la hauteur totale de l'île
         absolute_height = settings.FLOATING_ISLAND_BASE_HEIGHT + height_shift
@@ -95,3 +126,32 @@ class FloatingIsland:
                     for i in range(blocs["pierre"]):
                         # place la pierre
                         self.current_map[x, y, absolute_height + total_height - z - i] = settings.BLOC_VERS_ID["pierre"]
+
+                    if blocs["herbe"]+blocs["pierre"] > 0:
+                        where_island[x, y] = absolute_height + total_height
+
+
+        
+        self.put_artefact(where_island, seed)
+
+
+
+    def put_artefact(self, where_island, seed):
+        if not np.all(where_island[2:-2, 2:-2] == 0):
+            random.seed(seed + str(self.top_left))
+            if random.randint(0, 4) == 0:
+                non_zero_indices = np.argwhere(where_island[2:-2, 2:-2] != 0)
+                x, y = non_zero_indices[np.random.choice(non_zero_indices.shape[0])]
+                x, y = x+2, y+2
+                z = int(where_island[x, y] + 1)
+                self.current_map[x-2:x+3, y-2:y+3, z:z+artefact_pattern.shape[2]] = artefact_pattern
+        
+
+
+
+
+        
+        
+
+
+

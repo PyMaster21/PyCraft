@@ -37,8 +37,8 @@ def parse_preferences():
     Une fonction qui va parser les préférences pour les sortir du txt
     :return: un dictionnaire {key:val} pour les préférences
     """
-    if os.path.exists("preferences.txt"):  # Le fichier existe
-        with open("preferences.txt", "r") as f:  # On l'ouvre
+    if os.path.exists("../preferences.txt"):  # Le fichier existe
+        with open("../preferences.txt", "r") as f:  # On l'ouvre
             contents = f.read()
             # On parse
             # Si on a commencé un commentaire, dans quel cas on ignore tout texte jusqu'à la prochaine ligne
@@ -72,7 +72,7 @@ def parse_preferences():
 
     else:  # Si le fichier n'existe pas on le crée
         # On crée le fichier si celui-ci n'existe pas encore
-        with open("preferences.txt", "w+") as f:
+        with open("../preferences.txt", "w+") as f:
             f.write("""
 Ce fichier de préférences est traité par le fichier préférences.py
 les paramètres sont de forme
@@ -82,6 +82,7 @@ les paramètres sont de forme
 
 PARAMÈTRES MISC
 sensibilite: 0.4          # défaut: 0.4    Un float pour la sensibilite de la souris dans le jeu
+vitesse: 0.4            # défaut: 0.4     Un float pour la vitesse, 0.4 est assez lent
 gravite dynamique: True # défaut: True Un bool pour la gravité dynamique (la gravité diminue 
                         #              progressivement le plus haut on monte avant de s'inverser)
 max fps: 80             # défaut: 80   Le fps auquel le jeu sera limité
@@ -126,7 +127,6 @@ gendistance : 7        # défaut : 7,       Un uint >=3, Ceci va déterminer la 
                                                         seront demandées à être générées
 generation initiale : 10 # défaut: 10      Un int, ceci va déterminer la longueur (en chunks) du côté du carré de génération
                                            initale. 
-                                           Le plus votre ordinateur est puissant, le plus cette valeur peut être augmentée
 relief: True           # défaut: True      Un bool, ceci va déterminer si le terrain a du relief ou pas
 biomes: True           # défaut: True      Un bool, ceci va déterminer si le terrain a des biomes ou pas
 arbres: True           # défaut: True      Un bool, ceci va déterminer si le terrain a des arbres ou pas
@@ -134,6 +134,15 @@ arbres: True           # défaut: True      Un bool, ceci va déterminer si le t
 volcans: True          # défaut: True      Un bool, ceci va déterminer si le terrain a des volcans ou pas
 villages: True         # défaut: True      Un bool, ceci va déterminer si le terrain a des villages ou pas
 minerais: True         # défaut: True      Un bool, ceci va déterminer si le terrain a des minerais ou pas
+grottes: True          # défaut: True      Un bool, ceci va déterminer si le terrain a des grottes ou pas
+                    
+qualitégrottes: 2      # défaut: 2        Un uint entre 1 et 8 (inclus), determine la qualité de géneration des grottes 
+                                          A augmenter avec précaution, et seulement si vous allez visiter les grottes 
+                                          (mettre dans ce cas une gendistance et renderdistance pas trop élevées)
+                                          (le paramètre n'est pas pris en compte si grottes:False)
+                    
+Plus votre ordinateur est puissant, plus vous pouvez augmenter les paramètres suivants : vitesse, renderdistance, gendistance (et qualitégrottes)
+Pour un très bon ordinateur, vous pouvez mettre vitesse à 1, renderdistance à 20 et gendistance à 22.
                     """)
         return {}  # On retourne un dict vide puisque setup_préférences saura mettre les défauts
 
@@ -146,6 +155,7 @@ def setup_preferences():
     global ONLY_ON_PRESS_KEYS
     global GEN_DISTANCE, RENDER_DISTANCE, SENSITIVITY, DYNAMIC_GRAVITY, MAX_FPS, FOV
     global GENERATION, INITIAL_TERRAIN_SIZE
+    global SPEED, CAVE_QUALITY
     default_preferences = {  # Les préférences par défaut
         "clavier": "azerty",
         "devant": str_to_pg["z"],
@@ -164,6 +174,7 @@ def setup_preferences():
         "renderdistance": 5,
         "gendistance": 7,
         "sensibilite": 0.4,
+        "vitesse": 0.4,
         "gravitedynamique": True,
         "maxfps": 80,
         "fov": 70,
@@ -174,7 +185,9 @@ def setup_preferences():
         "îlesflottantes": True,
         "volcans": True,
         "villages": True,
-        "minerais": True
+        "minerais": True,
+        "grottes": True,
+        "qualitégrottes": 2,
     }
     parsed = parse_preferences()  # On récupère le dict des préférences en le parsant
 
@@ -280,8 +293,10 @@ def setup_preferences():
     DYNAMIC_GRAVITY = get_param_value_bool("gravitedynamique")  # Un bool pour la gravité dynamique
     MAX_FPS = get_param_value_number("maxfps", 1)  # Le fps auquel le jeu sera limité
     FOV = get_param_value_number("fov", 1)  # Voir la section caméra de la doc pour voir ce que ce nombre représente
+    SPEED = get_param_value_number("vitesse", 1)
+    CAVE_QUALITY = get_param_value_number("qualitégrottes", 0)
     #la longueur (en chunks) du côté du carré de génération initale.
-    INITIAL_TERRAIN_SIZE = max(0,get_param_value_number("generationinitiale",0))
+    INITIAL_TERRAIN_SIZE = min(max(0,get_param_value_number("generationinitiale",0)), int(GEN_DISTANCE * 2**(1/2)))
 
     GENERATION = {  # Différentes constantes pour activer ou désactiver certaines fonctionnalités de la génération
         "relief": get_param_value_bool("relief"),
@@ -289,7 +304,7 @@ def setup_preferences():
         "trees": get_param_value_bool("arbres"),
         "floating islands": get_param_value_bool("îlesflottantes"),
         "volcanos": get_param_value_bool("volcans"),
-        "caves": False,
+        "caves": get_param_value_bool("grottes"),
         "villages": get_param_value_bool("villages"),
         "ores": get_param_value_bool("minerais")
     }

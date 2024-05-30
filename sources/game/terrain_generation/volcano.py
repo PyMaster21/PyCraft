@@ -32,8 +32,10 @@ class Volcano:
 
         # Calcule la distance qui sépare le centre du volcan theorique et le player
         dist_from_player = ((self.center[0]-player_pos[0])**2+(self.center[1]-player_pos[1])**2)**(1/2)
-        if dist_from_player < (self.max_radius*2 + 80):
+        if dist_from_player < (self.max_radius*2 + settings.preferences.RENDER_DISTANCE * settings.CHUNK_SIZE):
             # Le volcan est trop proche du joueur pour être géneré en sécurité, on renonce à génerer
+            import winsound
+            winsound.Beep(1000, 500 )
             pass
         else:
             # Le volcan est assez loin pour être géneré sans bugs theoriques

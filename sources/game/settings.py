@@ -6,14 +6,15 @@ Les seules fonctions qui sont ici sont les fonctions mettant en place les paths 
 import random
 import os
 import json
-
+import game.preferences as preferences
+preferences.setup_preferences()
 
 # ---------------------------------------- PARAMÈTRES DE CHUNKS----------------------------------------
 CHUNK_SIZE = 16 # La longueur du côté de la chunk (c'est un carré selon le plan xy)
 WORLD_HEIGHT = 300 # La hauteur maximale à laquelle nous avons des blocs
 CHUNK_BLOCK_MARGIN = 500 # La marge de blocs à mettre en vram en plus que prévoit une chunk (voir world.game_chunk.load_to_screen)
 # PARAMÈTRES D'OVERCHUNKS 
-OVERCHUNK_SIZE = 256 # Un overchunk est un grand chunk utilisé pour le scan de structures, ceci est donc la longueur de son côté /2, puisque c'est une opération que nous effectuons dans tous les cas
+OVERCHUNK_SIZE =  (preferences.GEN_DISTANCE + 1) * 2 * CHUNK_SIZE# Un overchunk est un grand chunk utilisé pour le scan de structures, ceci est donc la longueur de son côté /2, puisque c'est une opération que nous effectuons dans tous les cas
 OVERCHUNK_SAFETY_MARGIN = 0 # La marge de sécurité pour les overchunks, utilisée lors de bugs
 
 
@@ -41,7 +42,7 @@ PLAYER_HITBOX_OFFSETS = [0.4,0.4,[-1.5,0.2]] # Les offsets pour dans chaque dire
 
 
 # ---------------------------------------- PARAMÈTRES DE MOUVEMENT ----------------------------------------
-MOVECONST = 0.4*1/30*1/2 # La constante de mouvement: va décider si on bouge plus ou moins vite
+MOVECONST = preferences.SPEED*1/30*1/2 # La constante de mouvement: va décider si on bouge plus ou moins vite
 TURNCONST = 0.02*1/30 # La constante pour tourner: va décider si on tourne plus ou moins vite, en plus de la sensitivité
 JUMPCONST = 0.4 # La constante de saut, va décider de combien on augment la vitesse verticale du joueur
 SENSITIVITY = 1*0.75 # La sensitivité pour tourner
@@ -103,6 +104,7 @@ ID_VERS_BLOC = { # Le dictionnaire envoyant un id à son nom
     17: "basalte",
     19: "cuivre",
     21: "verre",
+    22: "artefact"
 }
 BLOC_VERS_ID = {item : key for key, item in ID_VERS_BLOC.items()} # Le dictionnaire ID_VERS_BLOC inversé
 id_vers_tex = { # Un dictionnaire envoyant un id de bloc à son indice de texture

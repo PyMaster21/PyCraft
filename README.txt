@@ -1,0 +1,2 @@
+Pour supprimer toutes les données de vos mondes créés, lancez le fichier "clean_all_worlds.bat"
+Pour changer vos préferences de jeu, ouvrez le fichier "preferences" et faites les modifications que vous voulez. Il est préferable d'y jeter un coup d'oeil, ne serait-ce que pour découvrir les touches clavier du jeu. 

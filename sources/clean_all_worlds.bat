@@ -1,1 +1,0 @@
-"../PythonEmbedded/python" reboot.py
